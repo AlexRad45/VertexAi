@@ -1,0 +1,4 @@
+vertexai_credentials.json
+__pycache__/
+.vscode/
+images/

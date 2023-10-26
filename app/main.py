@@ -1,9 +1,12 @@
 from fastapi import FastAPI, APIRouter, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from app import genimage
+import app.schemas as schemas
+import app.generate_images as generate_images
+import app.generate_text as generate_text
 
 app = FastAPI()
 
+router = APIRouter()
 
 # for edit later when serving the main app
 origins = [
@@ -23,4 +26,35 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(genimage.router)
+
+@router.post("/genimage")
+def gen_images(genimage: schemas.GenImage):
+    try:
+        response_images = generate_images.generate_images_from_prompt(
+            genimage.prompt, genimage.number_of_images
+        )
+
+    except Exception as e:
+        return {"status": "failed"}
+
+    # Implement saving to google storage here
+
+    return {"status": "success"}
+
+
+@router.post("/gentext")
+def gen_text(gentext: schemas.GenText):
+    try:
+        response_text = generate_text.generate_text_from_prompt(
+            gentext.prompt, gentext.max_output_tokens, gentext.temperature
+        )
+
+    except Exception as e:
+        return {"status": "failed"}
+
+    # Implement saving to google storage here
+
+    return {"text": response_text}
+
+
+app.include_router(router)
