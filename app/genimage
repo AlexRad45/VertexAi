@@ -1,0 +1,55 @@
+from fastapi import FastAPI, APIRouter, HTTPException
+from google.cloud import vertexai_v1beta1 as vertexai
+from vertexai.preview.vision_models import ImageGenerationModel
+import vertexai
+from main import router
+from google.cloud import storage
+
+router = APIRouter(tags="genimage")
+storage_client = storage.Client()
+
+bucket_name = "Saved_Images"
+bucket = storage_client.bucket(bucket_name)
+
+
+@router.post("/generate-image")
+async def generate_image(prompt: str):
+    try:
+        vertexai_client = vertexai.VertexAiServiceClient()
+
+        # model_id = "your-model-id"  if we train our model put it here
+
+        # for now pretrained
+        model = ImageGenerationModel.from_pretrained("imagegeneration@002")
+
+        """ for google cloud
+        # project id and location of server
+        request = vertexai.GenerateTextToImageRequest(
+            parent=f"projects/omnithink/locations/images",
+            model=model,
+            text=prompt,
+        )
+        """
+
+        response = model.generate_images(
+            prompt="nice blue dress",
+            number_of_images=3,
+            seed=0,
+        )
+
+        # testing response, change to saving to cloud
+        response[0].show()
+        response[0].save("images/image1.png")
+
+        # sending images to the google cloud like so
+        # blob = bucket.blob(cloud_image_name)
+        # blob.upload_from_filename(local_image_path)
+
+        # return {"image_data": response.content}
+
+        # should handle exceptions and errors coming from the google cloud storage api
+
+        # return {"image_saved_locally": "generated_image.png"}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
