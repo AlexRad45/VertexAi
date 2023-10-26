@@ -1,0 +1,6 @@
+black
+flask
+fastapi
+google-cloud-aiplatform
+google-cloud-storage
+uvicorn
