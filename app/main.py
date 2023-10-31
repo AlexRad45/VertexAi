@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 import app.schemas as schemas
 import app.generate_images as generate_images
 import app.generate_text as generate_text
+import app.storage_client as storage_client
 
 app = FastAPI()
-
 router = APIRouter()
 
 # for edit later when serving the main app
@@ -37,7 +37,13 @@ def gen_images(genimage: schemas.GenImage):
     except Exception as e:
         return {"status": "failed"}
 
-    # Implement saving to google storage here
+    bucket = storage_client.init_storage()
+    for i, image_data in enumerate(response_images):
+        # Construct a unique destination blob name for each image
+        destination_blob_name = f"image_response{i}.png"
+
+        # Upload the image to the bucket
+        bucket.blob(destination_blob_name).upload_from_string(image_data)
 
     return {"status": "success"}
 
@@ -53,6 +59,7 @@ def gen_text(gentext: schemas.GenText):
         return {"status": "failed"}
 
     # Implement saving to google storage here
+    # new bucket?
 
     return {"text": response_text}
 
