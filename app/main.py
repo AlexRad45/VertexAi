@@ -43,7 +43,7 @@ def gen_images(genimage: schemas.GenImage):
         destination_blob_name = f"image_response{i}.png"
 
         # Upload the image to the bucket
-        bucket.blob(destination_blob_name).upload_from_string(image_data)
+        storage_client.upload_blob_fromfile(bucket, image_data, destination_blob_name)
 
     return {"status": "success"}
 
@@ -58,8 +58,12 @@ def gen_text(gentext: schemas.GenText):
     except Exception as e:
         return {"status": "failed"}
 
-    # Implement saving to google storage here
-    # new bucket?
+    bucket = storage_client.init_storage()
+    # create unique id for response
+    destination_blob_name = f"text_response.txt"
+    # maybe need another setup for text responses? new bucket
+
+    storage_client.upload_blob_fromstr(bucket, response_text, destination_blob_name)
 
     return {"text": response_text}
 

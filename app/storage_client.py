@@ -14,6 +14,11 @@ def init_storage():
     return storage_bucket
 
 
-def upload_blob(bucket, source_file, destination_blob):
+def upload_blob_fromfile(bucket, source_file, destination_blob):
     blob = bucket.blob(destination_blob)
     blob.upload_from_filename(source_file)
+
+
+def upload_blob_fromstr(bucket, text, destination_blob):
+    blob = bucket.blob(destination_blob)
+    blob.upload_from_string(text)
