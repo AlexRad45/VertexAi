@@ -1,4 +1,6 @@
 vertexai_credentials.json
+images-storage-service-account.json
+chatgpt_credentials.json
 __pycache__/
 .vscode/
 images/

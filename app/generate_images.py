@@ -1,5 +1,5 @@
 from vertexai.preview.vision_models import ImageGenerationModel, ImageGenerationResponse
-import vertexai_client
+import app.vertexai_client as vertexai_client
 
 
 def generate_images_from_prompt(

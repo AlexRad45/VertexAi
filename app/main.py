@@ -4,6 +4,7 @@ import app.schemas as schemas
 import app.generate_images as generate_images
 import app.generate_text as generate_text
 import app.storage_client as storage_client
+import os, PIL, io
 
 app = FastAPI()
 router = APIRouter()
@@ -35,6 +36,7 @@ def gen_images(genimage: schemas.GenImage):
         )
 
     except Exception as e:
+        print(e)
         return {"status": "failed"}
 
     bucket = storage_client.init_storage()
@@ -43,7 +45,14 @@ def gen_images(genimage: schemas.GenImage):
         destination_blob_name = f"image_response{i}.png"
 
         # Upload the image to the bucket
-        storage_client.upload_blob_fromfile(bucket, image_data, destination_blob_name)
+        storage_client.upload_blob_fromfile(
+            bucket, io.BytesIO(image_data._image_bytes), destination_blob_name
+        )
+
+    """for i, image_data in enumerate(response_images):
+        # Save each image locally in the "images" folder
+        image_path = os.path.join("images", f"image_response{i}.png")
+        image_data.save(image_path, "PNG")"""
 
     return {"status": "success"}
 
@@ -65,6 +74,7 @@ def gen_text(gentext: schemas.GenText):
 
     storage_client.upload_blob_fromstr(bucket, response_text, destination_blob_name)
 
+    print(response_text)
     return {"text": response_text}
 
 

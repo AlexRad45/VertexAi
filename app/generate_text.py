@@ -1,5 +1,5 @@
 from vertexai.preview.language_models import TextGenerationModel, TextGenerationResponse
-import vertexai_client
+import app.vertexai_client as vertexai_client
 
 
 def generate_text_from_prompt(
