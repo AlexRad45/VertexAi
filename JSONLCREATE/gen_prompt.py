@@ -1,7 +1,6 @@
 import openai
 import time
 
-openai.api_key = "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"
 
 
 # { "input_text": "", "output_text": [ ]}
