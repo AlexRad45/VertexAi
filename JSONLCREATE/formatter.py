@@ -1,29 +1,18 @@
-import re
 import json
 
 
 def format_output_text(input_dict):
     output_text_list = input_dict.get("output_text", [])
 
-    # Iterate through each dictionary in the list
-    for output_text_dict in output_text_list:
-        for key, value in output_text_dict.items():
-            if isinstance(value, str):
-                # Find everything inside and including square brackets
-                matches = re.findall(r"\[.*?\]", value)
+    # Convert each dictionary to a string without outer curly braces
+    output_text_str = ", ".join(
+        json.dumps(item, ensure_ascii=False) for item in output_text_list
+    )
 
-                # Escape existing quotations within the matched sections
-                for match in matches:
-                    escaped_match = match.replace('"', r"\"")
-                    value = value.replace(match, f'"{escaped_match}"')
+    # Update the 'output_text' key in the input_dict directly
+    input_dict["output_text"] = f"{output_text_str}"
 
-                # Update the value in the dictionary
-                output_text_dict[key] = value
-
-    # Update the 'output_text' key
-    input_dict["output_text"] = json.dumps(output_text_list)
-
-    return json.dumps(input_dict)
+    return json.dumps(input_dict, ensure_ascii=False)
 
 
 # Input and output file paths
